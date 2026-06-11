@@ -1510,32 +1510,24 @@ function listenFirebase() {
   console.log('Firebase: escuchando cambios...');
   db.ref('padel').on('value', function(snapshot) {
     var data = snapshot.val();
-    if (data) {
-      if (data.disponibles) disponibles = fixArray(data.disponibles);
-      if (data.players) {
-        players = fixArray(data.players);
-        loadPhotos(function(){
-          try { renderHome(); } catch(e) {}
-          try { renderMatchFull(); } catch(e) {}
-          try { renderAdmin(); } catch(e) {}
-        });
-      }
-      if (data.ranking && typeof data.ranking === 'object') ranking = data.ranking;
-      if (data.todayRank && typeof data.todayRank === 'object') todayRank = data.todayRank;
-      if (data.matchLog) matchLog = fixArray(data.matchLog);
-      if (data.session && typeof data.session === 'object') {
-        session = data.session;
-        if (session.teamA) session.teamA = fixArray(session.teamA);
-        if (session.teamB) session.teamB = fixArray(session.teamB);
-        if (session.bench) session.bench = fixArray(session.bench);
-      }
-      if (data.match && typeof data.match === 'object') {
-        match = normalizeMatch(data.match);
-      }
-      try { renderHome(); } catch(e) { console.error('renderHome error:', e); }
-      try { renderMatchFull(); } catch(e) { console.error('renderMatchFull error:', e); }
-      console.log('Firebase: UI actualizada');
+    if (!data) return;
+    if (data.disponibles) disponibles = fixArray(data.disponibles);
+    if (data.players) players = fixArray(data.players);
+    if (data.ranking && typeof data.ranking === 'object') ranking = data.ranking;
+    if (data.todayRank && typeof data.todayRank === 'object') todayRank = data.todayRank;
+    if (data.matchLog) matchLog = fixArray(data.matchLog);
+    if (data.session && typeof data.session === 'object') {
+      session = data.session;
+      if (session.teamA) session.teamA = fixArray(session.teamA);
+      if (session.teamB) session.teamB = fixArray(session.teamB);
+      if (session.bench) session.bench = fixArray(session.bench);
     }
+    if (data.match && typeof data.match === 'object') {
+      match = normalizeMatch(data.match);
+    }
+    try { renderHome(); } catch(e) {}
+    try { renderMatchFull(); } catch(e) {}
+    console.log('Firebase: UI actualizada');
   }, function(error) {
     console.error('Firebase listen error:', error);
   });
